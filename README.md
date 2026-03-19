@@ -2,6 +2,12 @@
 
 一个极简 CLI：把同一个问题同时交给 6 位不同风格的顾问。
 
+![main](img/main.png)
+
+![list](img/list-advisors.png)
+
+![advisor1](img/advisor1.png)
+
 ## 运行
 
 ```bash
