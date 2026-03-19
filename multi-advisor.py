@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from openai import OpenAI
-
-from deepfind.config import DEFAULT_BASE_URL, DEFAULT_MODEL, _clean_env_value, _load_dotenv
 
 try:
     from rich.console import Console
@@ -20,6 +19,8 @@ except ModuleNotFoundError:
 
 OLLAMA_BASE_URL = "http://localhost:11434/v1"
 OPENAI_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+DEFAULT_MODEL = "qwen3-max"
 EXIT_COMMANDS = {"exit", "quit", "退出", "q"}
 LIST_COMMANDS = {"list", "ls", "顾问", "人格"}
 
@@ -67,6 +68,36 @@ class AdvisorSettings:
     api_key: str
     model: str
     base_url: str
+
+
+def _clean_env_value(value: str | None) -> str | None:
+    if value is None:
+        return None
+    value = value.strip()
+    if not value:
+        return None
+    if value[0] in {'"', "'"} and value[-1] == value[0]:
+        value = value[1:-1].strip()
+    if " #" in value:
+        value = value.split(" #", 1)[0].rstrip()
+    return value or None
+
+
+def _load_dotenv() -> None:
+    env_file = _clean_env_value(os.getenv("MULTI_ADVISOR_ENV_FILE")) or ".env"
+    path = Path(env_file)
+    if not path.exists():
+        return
+
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, raw_value = line.split("=", 1)
+        key = key.strip()
+        value = _clean_env_value(raw_value)
+        if key and value is not None and key not in os.environ:
+            os.environ[key] = value
 
 
 def _env(name: str, default: str | None = None) -> str | None:

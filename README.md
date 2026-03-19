@@ -5,7 +5,8 @@
 ## 运行
 
 ```bash
-pip install openai rich deepfind
+pip install -r requirements.txt
+cp .env.example .env
 python multi-advisor.py
 ```
 
@@ -23,7 +24,9 @@ export OPENAI_API_KEY=your_key
 - `QWEN_API_KEY`
 - `DASHSCOPE_API_KEY`
 
-如果没配 Key，脚本会尝试使用本地 Ollama。
+也可以直接改 `.env`。
+
+如果没配 Key，脚本会默认尝试本地 Ollama。
 
 ## 用法
 
